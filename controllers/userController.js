@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/userModel");
+const { default: mongoose } = require("mongoose");
 
 const secret = "secret";
 
@@ -59,4 +60,43 @@ const Login = async (req, res) => {
     }
 };
 
-module.exports = { Register, Login, getUsers };
+
+const Updateuser = async (req, res) => {
+
+    try {
+        if (req.params.id === req.user.id || req.user.role === "admin") {
+            if (req.body.password) {
+                req.body.password = await bcrypt.hash(req.body.password, 12);
+            }
+            const updatedUser = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+            res.status(200).json({ updatedUser });
+        } else {
+            res.status(401).json({ message: "you can update your account only" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+
+
+
+}
+const deleteUser = async (req, res) => {
+
+    try {
+        if (req.params.id === req.user.id || req.user.role === "admin") {
+            const deletedUser = await User.findByIdAndDelete(req.params.id,);
+            res.status(200).json({ deletedUser });
+        } else {
+            res.status(401).json({ message: "you can delete your account only" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+
+
+
+}
+
+module.exports = { Register, Login, getUsers, Updateuser, deleteUser };
