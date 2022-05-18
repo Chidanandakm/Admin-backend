@@ -2,16 +2,25 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const User = require("../models/userModel");
-const { default: mongoose } = require("mongoose");
 
 const secret = "secret";
 
 const getUsers = async (req, res) => {
-    const { _id, role, email } = await User.findById(req.user._id);
+    // const { role } = req.user;
     try {
-        if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
+        // if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
         const users = await User.find();
-        res.json({ users });
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong" });
+    }
+};
+
+const getUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const user = await User.findById(id);
+        res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });
     }
@@ -21,7 +30,6 @@ const Register = async (req, res) => {
     const { name, email, password } = req.body;
 
     try {
-        if (!name || !email || !password) return res.status(400).json({ message: "Please provide email and password" });
 
         const userExist = await User.findOne({ email });
         if (userExist) return res.status(400).json({ message: "User already exists" });
@@ -50,7 +58,7 @@ const Login = async (req, res) => {
         const isPasswordCorrect = await bcrypt.compare(password, oldUser.password);
         if (!isPasswordCorrect) return res.status(400).json({ message: "Password is incorrect" });
 
-        const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, { expiresIn: "1h" });
+        const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, { expiresIn: "10h" });
 
         res.status(200).json({ result: oldUser, token });
 
@@ -99,4 +107,4 @@ const deleteUser = async (req, res) => {
 
 }
 
-module.exports = { Register, Login, getUsers, Updateuser, deleteUser };
+module.exports = { Register, Login, getUsers, Updateuser, deleteUser, getUser };
