@@ -2,25 +2,31 @@ const mongoose = require("mongoose");
 const Article = require("../models/articleModel");
 const Comment = require("../models/commentsModel");
 
-// create article
+
 const createArticle = async (req, res) => {
-    const { title, desc, categories } = req.body;
+    const { title, content, category, author, featured_image, media, excerpt, status, meta_keywords, meta_description, slug } = req.body;
 
     try {
-        const result = await Article.create({
-            categories,
+        const article = await Article.create({
             title,
-            desc,
-            slug: title.replace(/\s/g, "-").toLowerCase(),
+            content,
+            author,
+            category,
+            featured_image,
+            media,
+            excerpt,
+            status,
+            meta_keywords,
+            meta_description,
+            slug: !slug ? title.replace(/\s/g, "-").toLowerCase() : slug,
         });
-        res.status(201).json({ result });
+        res.status(201).json(article);
     } catch (error) {
         res.status(500).json({ error });
     }
 };
 
 
-//get all articles
 const getArticles = async (req, res) => {
     try {
 
@@ -32,7 +38,6 @@ const getArticles = async (req, res) => {
 };
 
 
-//get single article
 const getArticle = async (req, res) => {
     const { id } = req.params;
     try {
@@ -44,8 +49,8 @@ const getArticle = async (req, res) => {
 };
 
 
-//update article
 const updateArticle = async (req, res) => {
+
     try {
         if (req.body.slug) {
             req.body.slug = req.body.slug.replace(/\s/g, "-").toLowerCase();
@@ -54,7 +59,7 @@ const updateArticle = async (req, res) => {
             req.params.id,
             { $set: req.body },
             { new: true }
-        );
+        ).populate("category");
         res.status(200).json({ updatedArticle });
     } catch (error) {
         res.status(500).json({ error });
@@ -62,20 +67,18 @@ const updateArticle = async (req, res) => {
 };
 
 
-//delete article
 const deleteArticle = async (req, res) => {
+    const { id } = req.params;
     try {
-        const deletedArticle = await Article.findByIdAndDelete(req.params.id);
-        res
-            .status(200)
-            .json({ deletedArticle, message: "Article deleted successfully" });
+        const deletedArticle = await Article.findByIdAndDelete(id);
+        res.status(200).json({ deletedArticle, message: "Article deleted successfully" });
     } catch (error) {
         res.status(500).json({ error });
     }
 };
 
 
-//comment on article
+
 const commentOnArticle = async (req, res) => {
 
     const { id } = req.params;
@@ -98,16 +101,11 @@ const commentOnArticle = async (req, res) => {
     }
 };
 
-//update comment on article
 const updateComment = async (req, res) => {
 
-    // const { comments } = await Article.findById(req.params.id);
     const { id } = req.params;
-    // console.log(comments);
     const { text } = req.body;
-    const user = req.user;
     try {
-        // if()
         const comment = await Comment.findByIdAndUpdate(
             id,
             { $set: { text } },

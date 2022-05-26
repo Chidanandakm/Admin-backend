@@ -6,9 +6,9 @@ const User = require("../models/userModel");
 const secret = "secret";
 
 const getUsers = async (req, res) => {
-    // const { role } = req.user;
+    const { role } = req.user;
     try {
-        // if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
+        // if (role !== "admin") return res.status(401).jso n({ message: "Unauthorized" });
         const users = await User.find();
         res.status(200).json(users);
     } catch (error) {
@@ -60,7 +60,7 @@ const Login = async (req, res) => {
 
         const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, { expiresIn: "10h" });
 
-        res.status(200).json({ result: oldUser, token });
+        res.status(200).json({ user: oldUser, token });
 
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" })
@@ -90,11 +90,12 @@ const Updateuser = async (req, res) => {
 
 }
 const deleteUser = async (req, res) => {
+    const { id } = req.params;
 
     try {
         if (req.params.id === req.user.id || req.user.role === "admin") {
-            const deletedUser = await User.findByIdAndDelete(req.params.id,);
-            res.status(200).json({ deletedUser });
+            const deletedUser = await User.findByIdAndDelete(id);
+            res.status(200).json(deletedUser);
         } else {
             res.status(401).json({ message: "you can delete your account only" });
         }

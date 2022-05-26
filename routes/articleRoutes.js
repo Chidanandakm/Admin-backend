@@ -10,7 +10,7 @@ router.get('/:id', protectedRoute, getArticle);
 
 router.post('/create', protectedRoute, createArticle);
 
-router.patch('/:id', protectedRoute, updateArticle);
+router.put('/:id', protectedRoute, updateArticle);
 
 router.delete('/:id', protectedRoute, deleteArticle);
 
