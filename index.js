@@ -17,6 +17,11 @@ app.use("/users", userRoutes);
 app.use("/articles", articleRoutes);
 app.use('/category', categoryRoutes);
 
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
 
 
 mongoose
