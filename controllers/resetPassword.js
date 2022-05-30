@@ -1,15 +1,31 @@
 const mongoose = require("mongoose");
+const User = require("../models/userModel");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const bcryptjs = require("bcryptjs");
+const secret = "secret";
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
+    }
+});
 
 
-const resetPassword = async (req, res) => {
+const requestPasswordRecovery = async (req, res) => {
     const { email } = req.body;
+
     try {
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "User does not exist" });
+
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "1h" });
-        const url = `http://localhost:3000/reset/${token}`;
+        const url = process.env.ADMIN_URL / token;
+
         const mailOptions = {
-            from: " " + process.env.EMAIL,
+            from: process.env.EMAIL,
             to: email,
             subject: "Password Reset",
             text: `Click this link to reset your password: ${url}`
@@ -22,9 +38,30 @@ const resetPassword = async (req, res) => {
             }
         }
         );
-        res.status(200).json({ message: "Email sent" });
+        res.status(200).json({ message: "Check your mail for reset password link" });
     } catch (error) {
         res.status(500).json({ message: "Something went wrong" });
     }
 };
+
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+    try {
+        const decoded = jwt.verify(token, secret);
+
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(400).json({ message: "User does not exist" });
+
+        const hashedPassword = await bcryptjs.hash(password, 12);
+        const result = await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
+
+        const newToken = jwt.sign({ email: result.email, id: result._id }, secret, { expiresIn: "10h" });
+        res.status(200).json({ result, newToken, message: "Password reset successfully" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { requestPasswordRecovery, resetPassword };
 

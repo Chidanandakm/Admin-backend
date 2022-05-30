@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
+const { requestPasswordRecovery, resetPassword } = require("../controllers/resetPassword");
 const { Register, Login, getUsers, getUser, Updateuser, deleteUser } = require("../controllers/userController");
 const { protectedRoute } = require("../middleware/authMiddleware");
 
@@ -14,5 +15,8 @@ router.post("/login", Login);
 
 router.patch("/:id", protectedRoute, Updateuser);
 router.delete("/:id", protectedRoute, deleteUser);
+
+router.post('/request-reset-password', requestPasswordRecovery);
+router.post('/reset-password/:token', resetPassword);
 
 module.exports = router;

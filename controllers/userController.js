@@ -6,7 +6,7 @@ const User = require("../models/userModel");
 const secret = "secret";
 
 const getUsers = async (req, res) => {
-    const { role } = req.user;
+    const user = req.user;
     try {
         // if (role !== "admin") return res.status(401).jso n({ message: "Unauthorized" });
         const users = await User.find();
