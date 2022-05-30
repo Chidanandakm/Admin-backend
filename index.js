@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRoutes = require("./routes/userRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const path = require("path");
 
 const app = express();
 app.use(express.json({ limit: "50mb", extended: true }));
