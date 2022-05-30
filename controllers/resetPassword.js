@@ -24,7 +24,7 @@ const requestPasswordRecovery = async (req, res) => {
         if (!user) return res.status(400).json({ message: "User does not exist" });
 
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "1h" });
-        const url = `${process.env.ADMIN_URL}/${token}`
+        const url = `${process.env.ADMIN_URL}/reset-password/${token}`
 
         const mailOptions = {
             from: process.env.USER,
