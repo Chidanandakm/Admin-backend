@@ -4,11 +4,13 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcryptjs = require("bcryptjs");
 const secret = "secret";
+const dotenv = require("dotenv");
+dotenv.config();
 
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: process.env.EMAIL,
+        user: process.env.USER,
         pass: process.env.PASSWORD
     }
 });
@@ -22,10 +24,10 @@ const requestPasswordRecovery = async (req, res) => {
         if (!user) return res.status(400).json({ message: "User does not exist" });
 
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "1h" });
-        const url = process.env.ADMIN_URL / token;
+        const url = `${process.env.ADMIN_URL}/${token}`
 
         const mailOptions = {
-            from: process.env.EMAIL,
+            from: process.env.USER,
             to: email,
             subject: "Password Reset",
             text: `Click this link to reset your password: ${url}`
