@@ -37,6 +37,26 @@ const getArticles = async (req, res) => {
     }
 };
 
+const queryArticles = async (req, res) => {
+    const { query } = req.params;
+    try {
+        const articles = await Article.findOne({ title: query }).populate("comments");
+        res.status(200).json(articles);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+};
+
+const queryArticlesByCategory = async (req, res) => {
+    const { category } = req.params;
+    try {
+        const articles = await Article.find({ category: category }).populate("comments");
+        console.log(articles.length);
+        res.status(200).json(articles);
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+};
 
 const getArticle = async (req, res) => {
     const { id } = req.params;
@@ -147,6 +167,8 @@ module.exports = {
     deleteArticle,
     commentOnArticle,
     updateComment,
-    deleteComment
+    deleteComment,
+    queryArticles,
+    queryArticlesByCategory
 };
 

@@ -15,7 +15,7 @@ const createCategory = async (req, res) => {
 const getCategories = async (req, res) => {
     try {
         const allCategories = await Categories.find();
-        res.status(200).json({ allCategories });
+        res.status(200).json(allCategories);
     } catch (error) {
         res.status(500).json({ error });
     }
@@ -25,7 +25,7 @@ const getCategory = async (req, res) => {
     const { id } = req.params;
     try {
         const category = await Categories.findById(id);
-        res.status(200).json({ category });
+        res.status(200).json(category);
     } catch (error) {
         res.status(500).json({ error });
     }

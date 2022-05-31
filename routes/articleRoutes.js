@@ -1,18 +1,21 @@
 const express = require("express");
 const router = express.Router();
 
-const { createArticle, getArticles, getArticle, updateArticle, deleteArticle, commentOnArticle, updateComment, deleteComment } = require("../controllers/articleController");
+const { createArticle, getArticles, getArticle, queryArticles, updateArticle, deleteArticle, commentOnArticle, updateComment, deleteComment, queryArticlesByCategory } = require("../controllers/articleController");
 const { protectedRoute } = require("../middleware/authMiddleware");
 
-router.get('/', protectedRoute, getArticles);
+router.get('/', getArticles);
 
-router.get('/:id', protectedRoute, getArticle);
+router.get('/:id', getArticle);
 
 router.post('/create', protectedRoute, createArticle);
 
 router.put('/:id', protectedRoute, updateArticle);
 
 router.delete('/:id', protectedRoute, deleteArticle);
+
+// router.get('/:query', queryArticles);
+router.get('/?query', queryArticlesByCategory);
 
 
 //id used here id comment.id on article
