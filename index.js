@@ -5,7 +5,7 @@ const cors = require('cors');
 const userRoutes = require("./routes/userRoutes");
 const articleRoutes = require("./routes/articleRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
-const path = require("path");
+// const path = require("path");
 
 const app = express();
 app.use(express.json({ limit: "50mb", extended: true }));
@@ -18,10 +18,10 @@ app.use("/users", userRoutes);
 app.use("/articles", articleRoutes);
 app.use('/category', categoryRoutes);
 
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+// app.use(express.static(path.join(__dirname, 'build')));
+// app.get('/', function (req, res) {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
 
 
 

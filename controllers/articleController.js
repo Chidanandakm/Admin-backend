@@ -28,35 +28,24 @@ const createArticle = async (req, res) => {
 
 
 const getArticles = async (req, res) => {
+    const { category } = req.query;
+    const { title } = req.query;
     try {
-
-        const articles = await Article.find().populate("comments");
+        let articles;
+        if (category) {
+            articles = await Article.find({ category });
+        } else if (title) {
+            articles = await Article.find({ title: { $regex: title, $options: "i" } });
+        } else {
+            articles = await Article.find().populate("comments");
+        }
         res.status(200).json(articles);
     } catch (error) {
         res.status(500).json(error);
     }
 };
 
-const queryArticles = async (req, res) => {
-    const { query } = req.params;
-    try {
-        const articles = await Article.findOne({ title: query }).populate("comments");
-        res.status(200).json(articles);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
 
-const queryArticlesByCategory = async (req, res) => {
-    const { category } = req.params;
-    try {
-        const articles = await Article.find({ category: category }).populate("comments");
-        console.log(articles.length);
-        res.status(200).json(articles);
-    } catch (error) {
-        res.status(500).json({ error });
-    }
-};
 
 const getArticle = async (req, res) => {
     const { id } = req.params;
@@ -168,7 +157,5 @@ module.exports = {
     commentOnArticle,
     updateComment,
     deleteComment,
-    queryArticles,
-    queryArticlesByCategory
 };
 
