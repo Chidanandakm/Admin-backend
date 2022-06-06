@@ -73,7 +73,7 @@ const requestPassword = async (req, res) => {
         if (!user) return res.status(400).json({ message: "User does not exist" });
 
         const token = jwt.sign({ email: user.email, id: user._id }, secret, { expiresIn: "1h" });
-        const url = `${process.env.WEBSITE_URL}/reset-password-web/${token}`
+        const url = `${process.env.WEBSITE_URL}/reset-password/${token}`
 
         const mailOptions = {
             from: process.env.USER,
@@ -95,24 +95,7 @@ const requestPassword = async (req, res) => {
     }
 };
 
-const resetYourPassword = async (req, res) => {
-    const { token } = req.params;
-    const { password } = req.body;
-    try {
-        const decoded = jwt.verify(token, secret);
 
-        const user = await User.findById(decoded.id);
-        if (!user) return res.status(400).json({ message: "User does not exist" });
 
-        const hashedPassword = await bcryptjs.hash(password, 12);
-        const result = await User.findByIdAndUpdate(decoded.id, { password: hashedPassword });
-
-        const newToken = jwt.sign({ email: result.email, id: result._id }, secret, { expiresIn: "10h" });
-        res.status(200).json({ result, newToken, message: "Password reset successfully" });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-module.exports = { requestPasswordRecovery, resetPassword, requestPassword, resetYourPassword };
+module.exports = { requestPasswordRecovery, resetPassword, requestPassword };
 

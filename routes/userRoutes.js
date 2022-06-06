@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const { requestPasswordRecovery, resetPassword, requestPassword, resetYourPassword } = require("../controllers/resetPassword");
+const { requestPasswordRecovery, resetPassword, requestPassword } = require("../controllers/resetPassword");
 const { Register, Login, getUsers, getUser, Updateuser, deleteUser } = require("../controllers/userController");
 const { protectedRoute } = require("../middleware/authMiddleware");
 
@@ -20,6 +20,6 @@ router.post('/request-reset-password', requestPasswordRecovery);
 router.post('/reset-password/:token', resetPassword);
 
 router.post('/request-reset-password-web', requestPassword);
-router.post('/reset-password-web/:token', resetYourPassword);
+// router.post('/reset-password-web/:token', resetPassword);
 
 module.exports = router;

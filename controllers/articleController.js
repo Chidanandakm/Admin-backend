@@ -47,7 +47,7 @@ const getArticles = async (req, res) => {
       } else if (title) {
          articles = await Article.find({ title: { $regex: title, $options: "i" } });
       } else {
-         articles = await Article.find().populate("comments");
+         articles = await Article.find();
       }
       res.status(200).json(articles);
    } catch (error) {
