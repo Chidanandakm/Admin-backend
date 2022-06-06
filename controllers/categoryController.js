@@ -32,7 +32,7 @@ const getCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
    try {
-      const updatedCategory = await Categories.findByIdAndUpdate(req.params.id, { $set: req.body });
+      const updatedCategory = await Categories.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
       res.status(200).json({ updatedCategory });
    } catch (error) {
       res.status(500).json({ error });
